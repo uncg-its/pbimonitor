@@ -36,7 +36,11 @@ try {
         $state = New-Object psobject 
     }
     
-    $maxHistoryDate = [datetime]::UtcNow.Date.AddDays(-30)
+    # CHANGE: we need to set the max history date to less than 30 days
+    # to avoid the API limit. We are going to set it to 25 days
+    # to get around the 400 error that returns when we try to 
+    # get 30 days of data.
+    $maxHistoryDate = [datetime]::UtcNow.Date.AddDays(-25)
 
     if ($state.Activity.LastRun) {
         if (!($state.Activity.LastRun -is [datetime])) {
@@ -51,7 +55,7 @@ try {
 
     if ($pivotDate -lt $maxHistoryDate)
     {
-        Write-Host "Last run was more than 30 days ago"
+        Write-Host "Last run was more than 25 days ago"
         $pivotDate = $maxHistoryDate
     }
 
